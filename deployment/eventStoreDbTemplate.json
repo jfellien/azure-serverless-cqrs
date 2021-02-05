@@ -1,0 +1,178 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourcesLocation": {
+            "type": "string"
+        },
+        "resourcesLocationName": {
+            "type": "string"
+        },
+        "company": {
+            "type": "string"
+        },
+        "environment": {
+            "allowedValues": [
+                "dev", "stage", "live"
+            ],
+            "type": "string"
+        }
+    },
+    "variables": {
+        "cqrsServiceBusNamespaceName": "[concat(parameters('company'), '-servicebus-', parameters('environment'))]",
+        "eventStoreServiceBusQueueName": "event-store-messages",
+        "eventStoreDbAccountName":"[concat(parameters('company'), '-database-', parameters('environment'))]",
+        "eventStoreDbName":"event-store",
+        "eventStoreDbContainerName":"events",
+
+        "salesContext":"sales",
+        "productionContext": "production",
+        "partsWarehouseContext": "parts-warehouse",
+        "productWarehouseContext": "product-warehouse",
+        "purchasingContext" :"purchasing",
+
+        "salesServiceBusTopic": "[concat(variables('salesContext'), 'messages')]",
+        "productionServiceBusTopic": "[concat(variables('productionContext'), 'messages')]",
+        "partsWarehouseServiceBusTopic": "[concat(variables('partsWarehouseContext'), 'messages')]",
+        "productWarehouseServiceBusTopic": "[concat(variables('productWarehouseContext'), 'messages')]",
+        "purchasingServiceBusTopic": "[concat(variables('purchasingContext'), 'messages')]"
+    },
+    "resources": [
+        {   
+            "apiVersion": "2017-04-01",
+            "type": "Microsoft.ServiceBus/namespaces",
+            "name":"[variables('cqrsServiceBusNamespaceName')]",
+            "location":"[parameters('resourcesLocation')]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": { },
+            "resources": [
+                { 
+                    "apiVersion":"2017-04-01",
+                    "type": "queues",
+                    "name": "[variables('eventStoreServiceBusQueueName')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.ServiceBus/namespaces', variables('cqrsServiceBusNamespaceName'))]"
+                    ],
+                    "properties": {}
+                },
+                {
+                    "apiVersion":"2017-04-01",
+                    "type":"topics",
+                    "name":"[variables]"
+                }
+            ]
+        },
+        {
+            "apiVersion": "2020-04-01",
+            "kind": "GlobalDocumentDB",
+            "type": "Microsoft.DocumentDb/databaseAccounts",
+            "name": "[variables('eventStoreDbAccountName')]",
+            "location": "[parameters('resourcesLocation')]",
+            "properties": {
+                "databaseAccountOfferType": "Standard",
+                "locations": [
+                    {
+                        "id": "[concat(variables('eventStoreDbAccountName'), '-', parameters('resourcesLocation'))]",
+                        "failoverPriority": 0,
+                        "locationName": "[parameters('resourcesLocationName')]"
+                    }
+                ],
+                "backupPolicy": {
+                    "type": "Periodic",
+                    "periodicModeProperties": {
+                        "backupIntervalInMinutes": 240,
+                        "backupRetentionIntervalInHours": 8
+                    }
+                },
+                "isVirtualNetworkFilterEnabled": false,
+                "virtualNetworkRules": [],
+                "ipRules": [
+                    {
+                        "ipAddressOrRange": "104.42.195.92"
+                    },
+                    {
+                        "ipAddressOrRange": "40.76.54.131"
+                    },
+                    {
+                        "ipAddressOrRange": "52.176.6.30"
+                    },
+                    {
+                        "ipAddressOrRange": "52.169.50.45"
+                    },
+                    {
+                        "ipAddressOrRange": "52.187.184.26"
+                    }
+                ],
+                "dependsOn": [],
+                "capabilities": [
+                    {
+                        "name": "EnableServerless"
+                    }
+                ],
+                "enableFreeTier": false
+            },
+            "tags": {
+                "defaultExperience": "Core (SQL)",
+                "hidden-cosmos-mmspecial": "",
+                "CosmosAccountType": "Production"
+            }
+        },
+        {
+            "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases",
+            "name": "[concat(variables('eventStoreDbAccountName'), '/sql/', variables('eventStoreDbName'))]",
+            "apiVersion": "2016-03-31",
+            "dependsOn": [ "[resourceId('Microsoft.DocumentDB/databaseAccounts/', variables('eventStoreDbAccountName'))]" ],
+            "properties":{
+                "resource":{
+                    "id": "[variables('eventStoreDbName')]"
+                },
+                "options": { }
+            }
+        },
+        {
+            "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
+            "name": "[concat(variables('eventStoreDbAccountName'), '/sql/', variables('eventStoreDbName'), '/', variables('eventStoreDbContainerName'))]",
+            "apiVersion": "2016-03-31",
+            "dependsOn": [ "[resourceId('Microsoft.DocumentDB/databaseAccounts/apis/databases', variables('eventStoreDbAccountName'), 'sql', variables('eventStoreDbName'))]" ],
+            "properties":
+            {
+                "resource":{
+                    "id":  "[variables('eventStoreDbContainerName')]",
+                    "partitionKey": {
+                        "paths": [
+                        "/partitionKey"
+                        ],
+                        "kind": "Hash"
+                    },
+                    "indexingPolicy": {
+                        "indexingMode": "consistent",
+                        "includedPaths": [{
+                                "path": "/*",
+                                "indexes": [
+                                    {
+                                        "kind": "Range",
+                                        "dataType": "number",
+                                        "precision": -1
+                                    },
+                                    {
+                                        "kind": "Range",
+                                        "dataType": "string",
+                                        "precision": -1
+                                    }
+                                ]
+                            }
+                        ],
+                        "excludedPaths": [{
+                                "path": "/MyPathToNotIndex/*"
+                            }
+                        ]
+                    }
+                },
+                "options": {}
+            }
+        }
+    ],
+    "outputs": {}
+}
