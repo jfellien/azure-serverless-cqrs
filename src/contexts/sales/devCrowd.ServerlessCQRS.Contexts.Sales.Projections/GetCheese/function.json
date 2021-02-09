@@ -1,0 +1,28 @@
+{
+  "bindings": [
+    {
+      "authLevel": "function",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "get"
+      ],
+      "route": "cheese"
+    },
+    {
+      "direction": "in",
+      "type": "cosmosDb",
+      "name": "cheese",
+      "connectionStringSetting":"PROJECTIONS_DB_CONNECTION_STRING",
+      "databaseName":"projections",
+      "collectionName":"sales",
+      "sqlQuery":"SELECT * FROM c WHERE c.document_type='cheese'"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    }
+  ]
+}
