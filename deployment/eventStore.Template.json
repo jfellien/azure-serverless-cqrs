@@ -5,9 +5,6 @@
         "resourcesLocation": {
             "type": "string"
         },
-        "resourcesLocationName": {
-            "type": "string"
-        },
         "company": {
             "type": "string"
         },
@@ -19,51 +16,11 @@
         }
     },
     "variables": {
-        "cqrsServiceBusNamespaceName": "[concat(parameters('company'), '-servicebus-', parameters('environment'))]",
-        "eventStoreServiceBusQueueName": "event-store-messages",
         "eventStoreDbAccountName":"[concat(parameters('company'), '-database-', parameters('environment'))]",
         "eventStoreDbName":"event-store",
-        "eventStoreDbContainerName":"events",
-
-        "salesContext":"sales",
-        "productionContext": "production",
-        "partsWarehouseContext": "parts-warehouse",
-        "productWarehouseContext": "product-warehouse",
-        "purchasingContext" :"purchasing",
-
-        "salesServiceBusTopic": "[concat(variables('salesContext'), 'messages')]",
-        "productionServiceBusTopic": "[concat(variables('productionContext'), 'messages')]",
-        "partsWarehouseServiceBusTopic": "[concat(variables('partsWarehouseContext'), 'messages')]",
-        "productWarehouseServiceBusTopic": "[concat(variables('productWarehouseContext'), 'messages')]",
-        "purchasingServiceBusTopic": "[concat(variables('purchasingContext'), 'messages')]"
+        "eventStoreDbContainerName":"events"
     },
     "resources": [
-        {   
-            "apiVersion": "2017-04-01",
-            "type": "Microsoft.ServiceBus/namespaces",
-            "name":"[variables('cqrsServiceBusNamespaceName')]",
-            "location":"[parameters('resourcesLocation')]",
-            "sku": {
-                "name": "Standard"
-            },
-            "properties": { },
-            "resources": [
-                { 
-                    "apiVersion":"2017-04-01",
-                    "type": "queues",
-                    "name": "[variables('eventStoreServiceBusQueueName')]",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.ServiceBus/namespaces', variables('cqrsServiceBusNamespaceName'))]"
-                    ],
-                    "properties": {}
-                },
-                {
-                    "apiVersion":"2017-04-01",
-                    "type":"topics",
-                    "name":"[variables]"
-                }
-            ]
-        },
         {
             "apiVersion": "2020-04-01",
             "kind": "GlobalDocumentDB",
@@ -74,9 +31,8 @@
                 "databaseAccountOfferType": "Standard",
                 "locations": [
                     {
-                        "id": "[concat(variables('eventStoreDbAccountName'), '-', parameters('resourcesLocation'))]",
                         "failoverPriority": 0,
-                        "locationName": "[parameters('resourcesLocationName')]"
+                        "locationName": "[resourceGroup().location]"
                     }
                 ],
                 "backupPolicy": {
@@ -112,11 +68,6 @@
                     }
                 ],
                 "enableFreeTier": false
-            },
-            "tags": {
-                "defaultExperience": "Core (SQL)",
-                "hidden-cosmos-mmspecial": "",
-                "CosmosAccountType": "Production"
             }
         },
         {

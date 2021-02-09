@@ -1,0 +1,35 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourcesLocation": {
+            "type": "string"
+        },
+        "company": {
+            "type": "string"
+        },
+        "environment": {
+            "allowedValues": [
+                "dev", "stage", "live"
+            ],
+            "type": "string"
+        }
+    },
+    "variables": {
+        "signalRServiceName": "[concat(parameters('company'), '-signalR-', parameters('environment'))]"
+    },
+    "resources": [
+        {   
+            "type": "Microsoft.SignalRService/SignalR",
+            "apiVersion": "2020-05-01",
+            "name":"[variables('signalRServiceName')]",
+            "location":"[parameters('resourcesLocation')]",
+            "sku": {
+                "name":"Free_F1"
+            },
+            "properties": { },
+            "resources": [ ]
+        }
+    ],
+    "outputs": {}
+}
