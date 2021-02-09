@@ -1,1 +1,1 @@
-# azure-serverless-event-store
+# azure-serverless-cqrs
