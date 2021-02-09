@@ -25,9 +25,26 @@
             "name":"[variables('signalRServiceName')]",
             "location":"[parameters('resourcesLocation')]",
             "sku": {
-                "name":"Free_F1"
+                "name":"Free_F1",
+                "tier": "Free",
+                "size":"F1"
+
+
             },
-            "properties": { },
+            "properties": {
+                "features": [
+                    {
+                        "flag": "ServiceMode",
+                        "value":"Serverless",
+                        "properties": {}
+                    }
+                ],
+                "cors": {
+                    "allowedOrigins": [
+                        "*"
+                    ]
+                }
+             },
             "resources": [ ]
         }
     ],
