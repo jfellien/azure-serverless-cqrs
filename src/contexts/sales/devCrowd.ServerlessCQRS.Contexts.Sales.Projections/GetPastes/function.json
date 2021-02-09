@@ -8,7 +8,7 @@
       "methods": [
         "get"
       ],
-      "route": "paste"
+      "route": "pastes"
     },
     {
       "direction": "in",
