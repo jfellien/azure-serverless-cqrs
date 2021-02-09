@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devCrowd.ServerlessCQRS.Con
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devCrowd.ServerlessCQRS.CustomBindings", "infrastructure\devCrowd.ServerlessCQRS.CustomBindings\devCrowd.ServerlessCQRS.CustomBindings.csproj", "{3AE5372F-4E28-4450-9E0D-BC205BC6AAC3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devCrowd.ServerlessCQRS.Notifications", "infrastructure\devCrowd.ServerlessCQRS.Notifications\devCrowd.ServerlessCQRS.Notifications.csproj", "{77372DDE-5FA4-448F-99B6-858E438DEFD9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +48,7 @@ Global
 		{87FF8545-554A-4F55-AF74-7966A811B530} = {574CC435-513D-4BCA-9FB1-4FC874A8B41F}
 		{922B4982-335C-481F-B33B-763656A03792} = {D85EB56E-0BA1-48F6-8658-53AEE8F5B2B1}
 		{3AE5372F-4E28-4450-9E0D-BC205BC6AAC3} = {26C369E9-14C8-4221-9147-278251E0ADA5}
+		{77372DDE-5FA4-448F-99B6-858E438DEFD9} = {26C369E9-14C8-4221-9147-278251E0ADA5}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{A65DB828-F5C0-43A3-B536-1786D19AA9CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -76,5 +79,9 @@ Global
 		{3AE5372F-4E28-4450-9E0D-BC205BC6AAC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3AE5372F-4E28-4450-9E0D-BC205BC6AAC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3AE5372F-4E28-4450-9E0D-BC205BC6AAC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77372DDE-5FA4-448F-99B6-858E438DEFD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77372DDE-5FA4-448F-99B6-858E438DEFD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77372DDE-5FA4-448F-99B6-858E438DEFD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77372DDE-5FA4-448F-99B6-858E438DEFD9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
