@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler.Services
+namespace devCrowd.ServerlessCQRS.Infrastructure.Lib.EventSourcing
 {
     public interface IHandleEvent<T>
     {
