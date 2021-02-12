@@ -30,7 +30,12 @@ namespace devCrowd.ServerlessCQRS.CustomBindings.EventStore
                 eventStoreDatabaseName, 
                 eventsCollectionName);
             
-            var domainEventsPublisher = new ServiceBusDomainEventsPublisher();
+            var serviceBusConnectionString = Environment.GetEnvironmentVariable("EVENT_HANDLER_CONNECTION_STRING");
+            var contextTopicName = Environment.GetEnvironmentVariable("EVENT_HANDLER_TOPIC_NAME");
+            
+            var domainEventsPublisher = new ServiceBusDomainEventsPublisher(
+                serviceBusConnectionString,
+                contextTopicName);
             
             return new DomainEventStream(
                 attribute.ContextName,

@@ -48,7 +48,7 @@ namespace devCrowd.ServerlessCQRS.CustomBindings.EventStore
 
         public Task Append(IEnumerable<IDomainEvent> domainEvents)
         {
-            return WriteIntoStorageAndLocalHistory(domainEvents, _context, _entity, _entityId);
+            return WriteToStorageAndLocalHistoryAndPublish(domainEvents, _context, _entity, _entityId);
         }
         
         public Task Append(IEnumerable<IDomainEvent> domainEvents, string entityId)
@@ -65,7 +65,7 @@ namespace devCrowd.ServerlessCQRS.CustomBindings.EventStore
                 throw new ArgumentException("You have set entityId but this instance of EventStream already have an EntityId");
             }
             
-            return WriteIntoStorageAndLocalHistory(domainEvents, _context, _entity, entityId);
+            return WriteToStorageAndLocalHistoryAndPublish(domainEvents, _context, _entity, entityId);
         }
 
         public async Task<bool> IsEmpty()
@@ -95,19 +95,35 @@ namespace devCrowd.ServerlessCQRS.CustomBindings.EventStore
             return _storage.ReadBy(_context, _entity, _entityId, default);
         }
 
-        private async Task WriteIntoStorageAndLocalHistory(IEnumerable<IDomainEvent> domainEvents, 
+        private async Task WriteToStorageAndLocalHistoryAndPublish(
+            IEnumerable<IDomainEvent> domainEvents, 
             string context, string entity, string entityId)
         {
             foreach (var domainEvent in domainEvents)
             {
-                var sequenceNumber = await _storage.Write(domainEvent, context, entity, entityId);
+                var sequenceNumber = await WriteToStorage(domainEvent, context, entity, entityId);
 
-                // History is null when no Read is happen yet
-                if (_historySequence != null)
-                {
-                    _historySequence.Add(new SequencedDomainEvent(sequenceNumber, domainEvent));
-                }
+                AddToLocalHistory(domainEvent, sequenceNumber);
+
+                PublishChanges(domainEvent);
             }
+        }
+
+        private async Task<long> WriteToStorage(IDomainEvent domainEvent, string context, string entity, string entityId)
+        {
+            return await _storage.Write(domainEvent, context, entity, entityId);
+        }
+        private void AddToLocalHistory(IDomainEvent domainEvent, long sequenceNumber)
+        {
+            // History is null when no Read is happen yet
+            if (_historySequence != null)
+            {
+                _historySequence.Add(new SequencedDomainEvent(sequenceNumber, domainEvent));
+            }
+        }
+        private async Task PublishChanges(IDomainEvent domainEvent)
+        {
+            _publisher.Publish(domainEvent);
         }
     }
 }

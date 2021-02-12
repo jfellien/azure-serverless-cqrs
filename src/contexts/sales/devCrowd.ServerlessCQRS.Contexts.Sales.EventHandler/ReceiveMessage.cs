@@ -2,6 +2,8 @@ using System;
 using System.Threading.Tasks;
 using devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler.Services;
 using devCrowd.ServerlessCQRS.Infrastructure.Lib;
+using devCrowd.ServerlessCQRS.Infrastructure.Lib.EventSourcing;
+using devCrowd.ServerlessCQRS.Infrastructure.Lib.Extensions;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
@@ -11,9 +13,9 @@ namespace devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler
 {
     public class ReceiveMessage
     {
-        private readonly IHandleSalesEvents _salesEventHandler;
+        private readonly IHandleEvents _salesEventHandler;
 
-        public ReceiveMessage(IHandleSalesEvents salesEventHandler)
+        public ReceiveMessage(IHandleEvents salesEventHandler)
         {
             _salesEventHandler = salesEventHandler;
         }
@@ -24,13 +26,14 @@ namespace devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler
             [ServiceBusTrigger(
                 "%EVENT_HANDLER_TOPIC_NAME%", 
                 "%EVENT_HANDLER_SUBSCRIPTION_NAME%")]
-            Message serviceBusMMessage, 
+            Message serviceBusMessage, 
             ILogger log)
         {
             try
             {
-                var domainEvent = ServiceBusMessageConverter.ToDomainEvent(serviceBusMMessage);
-                //_salesEventHandler.Handle(domainEvent);
+                var domainEvent = serviceBusMessage.ToDomainEvent();
+                
+                await _salesEventHandler.Handle(domainEvent);
             }
             catch (Exception e)
             {
