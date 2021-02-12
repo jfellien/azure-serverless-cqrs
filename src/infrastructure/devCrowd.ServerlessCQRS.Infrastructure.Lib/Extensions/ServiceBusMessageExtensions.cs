@@ -4,31 +4,12 @@ using devCrowd.ServerlessCQRS.Infrastructure.Lib.EventSourcing;
 using Microsoft.Azure.ServiceBus;
 using Newtonsoft.Json;
 
-namespace devCrowd.ServerlessCQRS.Infrastructure.Lib
+namespace devCrowd.ServerlessCQRS.Infrastructure.Lib.Extensions
 {
-    public static class ServiceBusMessageConverter
+    public static class ServiceBusMessageExtensions
     {
-        const string EVENT_TYPE = "ContainedEventType";
+        public const string EVENT_TYPE = "ContainedEventType";
 
-        /// <summary>
-        /// Converts a DomainEvent to a ServiceBusMessage and sets
-        /// a UserProperty with EventType Name
-        /// </summary>
-        /// <param name="domainEvent"></param>
-        /// <returns></returns>
-        public static Message ToServiceBusMessage(IDomainEvent domainEvent)
-        {
-            var eventAsString = JsonConvert.SerializeObject(domainEvent);
-            var eventAsBytes = Encoding.UTF8.GetBytes(eventAsString);
-            
-            var serviceBusMessage = new Message(eventAsBytes);
-            var eventTypeName = domainEvent.GetType().AssemblyQualifiedName;
-            
-            serviceBusMessage.UserProperties.Add(EVENT_TYPE, eventTypeName);
-
-            return serviceBusMessage;
-        }
-        
         /// <summary>
         /// Converts a ServiceBusMessage to a DomainEvent
         /// </summary>
@@ -36,7 +17,7 @@ namespace devCrowd.ServerlessCQRS.Infrastructure.Lib
         /// <returns></returns>
         /// <exception cref="ArgumentException">If UserProperty does not contain a Event Type property</exception>
         /// <exception cref="ArgumentException">If Event Type not available in solution</exception>
-        public static IDomainEvent ToDomainEvent(Message serviceBusMessage)
+        public static IDomainEvent ToDomainEvent(this Message serviceBusMessage)
         {
             if (serviceBusMessage.UserProperties.ContainsKey(EVENT_TYPE) == false)
             {
