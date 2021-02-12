@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using devCrowd.ServerlessCQRS.Infrastructure.Lib.EventSourcing;
 
 namespace devCrowd.ServerlessCQRS.CustomBindings.EventStore
 {
@@ -27,38 +28,30 @@ namespace devCrowd.ServerlessCQRS.CustomBindings.EventStore
             _entityId = entityId;
             _storage = storage;
             _publisher = publisher;
-
-            _historySequence = new DomainEventSequence();
         }
 
-        public Task Append(object domainEvent)
+        public Task Append(IDomainEvent domainEvent)
         {
-            return Append(new List<object>
+            return Append(new List<IDomainEvent>
             {
                 domainEvent
             });
         }
         
-        public Task Append(object domainEvent, string entityId)
+        public Task Append(IDomainEvent domainEvent, string entityId)
         {
-            return Append(new List<object>
+            return Append(new List<IDomainEvent>
             {
                 domainEvent
             }, entityId);
         }
 
-        public async Task Append(IEnumerable<object> domainEvents)
+        public Task Append(IEnumerable<IDomainEvent> domainEvents)
         {
-            foreach (var domainEvent in domainEvents)
-            {
-                _historySequence.Append(domainEvent);
-                
-                // Write Event to Storage. If _entityId is null, so its intentional.
-                await _storage.Write(domainEvent, _context, _entity, _entity);
-            }
+            return WriteIntoStorageAndLocalHistory(domainEvents, _context, _entity, _entityId);
         }
         
-        public async Task Append(IEnumerable<object> domainEvents, string entityId)
+        public Task Append(IEnumerable<IDomainEvent> domainEvents, string entityId)
         {
             if (string.IsNullOrWhiteSpace(entityId))
             {
@@ -67,20 +60,12 @@ namespace devCrowd.ServerlessCQRS.CustomBindings.EventStore
             
             if (string.IsNullOrWhiteSpace(_entityId) == false 
                 && string.IsNullOrWhiteSpace(entityId) == false
-                && _entity.ToLowerInvariant() != entityId.ToLowerInvariant())
+                && _entityId.ToLowerInvariant() != entityId.ToLowerInvariant())
             {
                 throw new ArgumentException("You have set entityId but this instance of EventStream already have an EntityId");
             }
             
-            _entityId = entityId;
-            
-            foreach (var domainEvent in domainEvents)
-            {
-                // Write Event to Storage. EntityId has a value.
-                var sequenceNumber = await _storage.Write(domainEvent, _context, _entity, _entityId);
-                
-                _historySequence.Add(new SequencedDomainEvent(sequenceNumber, domainEvent));
-            }
+            return WriteIntoStorageAndLocalHistory(domainEvents, _context, _entity, entityId);
         }
 
         public async Task<bool> IsEmpty()
@@ -108,6 +93,21 @@ namespace devCrowd.ServerlessCQRS.CustomBindings.EventStore
             }
 
             return _storage.ReadBy(_context, _entity, _entityId, default);
+        }
+
+        private async Task WriteIntoStorageAndLocalHistory(IEnumerable<IDomainEvent> domainEvents, 
+            string context, string entity, string entityId)
+        {
+            foreach (var domainEvent in domainEvents)
+            {
+                var sequenceNumber = await _storage.Write(domainEvent, context, entity, entityId);
+
+                // History is null when no Read is happen yet
+                if (_historySequence != null)
+                {
+                    _historySequence.Add(new SequencedDomainEvent(sequenceNumber, domainEvent));
+                }
+            }
         }
     }
 }

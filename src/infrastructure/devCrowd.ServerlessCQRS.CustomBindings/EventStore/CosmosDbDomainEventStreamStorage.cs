@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using devCrowd.ServerlessCQRS.Infrastructure.Lib.EventSourcing;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Fluent;
 using Newtonsoft.Json;
@@ -39,7 +40,7 @@ namespace devCrowd.ServerlessCQRS.CustomBindings.EventStore
                     "SELECT * FROM c " +
                     "WHERE c.context=@context " +
                     "ORDER BY c.isoTimestamp")
-                .WithParameter("@context", context.ToLower());
+                .WithParameter("@context", context.ToLowerInvariant());
 
             return ReadDomainEventsStream(query, cancellationToken);
         }
@@ -51,8 +52,8 @@ namespace devCrowd.ServerlessCQRS.CustomBindings.EventStore
                     "WHERE c.context=@context " +
                     "AND c.entity=@entity " +
                     "ORDER BY c.isoTimestamp")
-                .WithParameter("@context", context.ToLower())
-                .WithParameter("@entity", entity.ToLower());
+                .WithParameter("@context", context.ToLowerInvariant())
+                .WithParameter("@entity", entity.ToLowerInvariant());
 
             return ReadDomainEventsStream(query, cancellationToken);
         }
@@ -65,21 +66,21 @@ namespace devCrowd.ServerlessCQRS.CustomBindings.EventStore
                     "AND c.entity=@entity " +
                     "AND c.entityId=@entityId " +
                     "ORDER BY c.isoTimestamp")
-                .WithParameter("@context", context.ToLower())
-                .WithParameter("@entity", entity.ToLower())
+                .WithParameter("@context", context.ToLowerInvariant())
+                .WithParameter("@entity", entity.ToLowerInvariant())
                 .WithParameter("@entityId", entityId);
 
             return ReadDomainEventsStream(query, cancellationToken);
         }
 
-        public async Task<long> Write(object domainEvent, string context, string entity = null, string entityId = null)
+        public async Task<long> Write(IDomainEvent domainEvent, string context, string entity = null, string entityId = null)
         {
             var domainEventWrap = new EventStoreDomainEventWrap
             {
                 EventId = Guid.NewGuid().ToString(),
 
-                Context = context,
-                Entity = entity,
+                Context = context.ToLowerInvariant(),
+                Entity = entity.ToLowerInvariant(),
                 EntityId = entityId,
 
                 EventName = domainEvent.GetType().Name,
@@ -109,7 +110,9 @@ namespace devCrowd.ServerlessCQRS.CustomBindings.EventStore
 
                     events.AddRange(sequencedDomainEvents);
 
-                    _lastSequenceNumberOfStream = sequencedDomainEvents.Last().SequenceNumber;
+                    _lastSequenceNumberOfStream = events.Any() 
+                        ? events.Last().SequenceNumber
+                        : 0;
                 }
             }
 
@@ -134,7 +137,7 @@ namespace devCrowd.ServerlessCQRS.CustomBindings.EventStore
             }
 
             var sequenceNumber = wrappedDomainEvent["sequenceNumber"].Value<long>();
-            var domainEventInstance = wrappedDomainEvent["eventData"].ToObject(domainEventType, _defaultSerializer);
+            var domainEventInstance = wrappedDomainEvent["payload"].ToObject(domainEventType, _defaultSerializer) as IDomainEvent;
 
             return new SequencedDomainEvent(sequenceNumber, domainEventInstance);
         }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using devCrowd.ServerlessCQRS.Infrastructure.Lib.EventSourcing;
 
 namespace devCrowd.ServerlessCQRS.CustomBindings.EventStore
 {
@@ -17,6 +18,6 @@ namespace devCrowd.ServerlessCQRS.CustomBindings.EventStore
         /// <param name="entity"></param>
         /// <param name="entityId"></param>
         /// <returns>This Events SequenceNumber</returns>
-        Task<long> Write(object domainEvent, string context, string entity = null, string entityId = null);
+        Task<long> Write(IDomainEvent domainEvent, string context, string entity = null, string entityId = null);
     }
 }
