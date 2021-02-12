@@ -8,4 +8,8 @@
       <Folder Include="Models" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\infrastructure\devCrowd.ServerlessCQRS.Infrastructure.Lib\devCrowd.ServerlessCQRS.Infrastructure.Lib.csproj" />
+    </ItemGroup>
+
 </Project>
