@@ -8,6 +8,19 @@ namespace devCrowd.ServerlessCQRS.CustomBindings.EventStore
     [Binding]
     public class DomainEventStreamAttribute : Attribute
     {
+        public DomainEventStreamAttribute(string contextName) : this(contextName, null, null)
+        { }
+        
+        public DomainEventStreamAttribute(string contextName, string entityName) : this(contextName, entityName, null)
+        { }
+        
+        public DomainEventStreamAttribute(string contextName, string entityName, string entityId)
+        {
+            ContextName = contextName;
+            EntityName = entityName;
+            EntityId = entityId;
+        }
+        
         [AutoResolve] 
         public string ContextName { get; set; }
         
