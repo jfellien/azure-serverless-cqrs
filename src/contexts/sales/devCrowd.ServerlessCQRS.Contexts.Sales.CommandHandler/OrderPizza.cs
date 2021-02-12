@@ -26,7 +26,7 @@ namespace devCrowd.ServerlessCQRS.Contexts.Sales.CommandHandler
         {
             var orderPlaced = new OrderPlaced
             {
-                EntityId = Guid.NewGuid().ToString(),
+                OrderId = Guid.NewGuid().ToString(),
                 OrderNumber = NextOrderNumber(),
                 Paste = order.Paste,
                 Tomatoes = order.Tomatoes,
@@ -36,12 +36,12 @@ namespace devCrowd.ServerlessCQRS.Contexts.Sales.CommandHandler
 
             // Put the Event into EventStream.
             // EntityId is needed because the Stream doesn't know the Id and can't read from Event 
-            await eventStream.Append(orderPlaced, orderPlaced.EntityId);
+            await eventStream.Append(orderPlaced, orderPlaced.OrderId);
 
             return new OkObjectResult(new
             {
                 orderNumber = orderPlaced.OrderNumber,
-                orderId = orderPlaced.EntityId,
+                orderId = orderPlaced.OrderId,
                 message = "Order placed"
             });
         }

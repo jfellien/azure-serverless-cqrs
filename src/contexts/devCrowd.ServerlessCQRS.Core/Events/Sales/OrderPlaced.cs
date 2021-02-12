@@ -1,8 +1,10 @@
+using devCrowd.ServerlessCQRS.Infrastructure.Lib.EventSourcing;
+
 namespace devCrowd.ServerlessCQRS.Core.Events.Sales
 {
-    public class OrderPlaced
+    public class OrderPlaced : IDomainEvent
     {
-        public string EntityId { get; set; }
+        public string OrderId { get; set; }
         public string OrderNumber { get; set; }
         public string Paste { get; set; }
         public string Tomatoes { get; set; }
