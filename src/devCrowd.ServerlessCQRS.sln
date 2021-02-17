@@ -4,11 +4,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Contexts", "Contexts", "{7F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{26C369E9-14C8-4221-9147-278251E0ADA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devCrowd.ServerlessCQRS.Core", "contexts\devCrowd.ServerlessCQRS.Core\devCrowd.ServerlessCQRS.Core.csproj", "{A65DB828-F5C0-43A3-B536-1786D19AA9CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devCrowd.ServerlessCQRS.Core", "domain\devCrowd.ServerlessCQRS.Core\devCrowd.ServerlessCQRS.Core.csproj", "{A65DB828-F5C0-43A3-B536-1786D19AA9CA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sales", "Sales", "{5C2236BA-E329-49F1-9353-FB979AAC19A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devCrowd.ServerlessCQRS.Contexts.Sales.CommandHandler", "contexts\sales\devCrowd.ServerlessCQRS.Contexts.Sales.CommandHandler\devCrowd.ServerlessCQRS.Contexts.Sales.CommandHandler.csproj", "{C56865CC-2FDD-49AC-96AF-C5265BC0159C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devCrowd.ServerlessCQRS.Contexts.Sales.CommandHandler", "domain\sales\devCrowd.ServerlessCQRS.Contexts.Sales.CommandHandler\devCrowd.ServerlessCQRS.Contexts.Sales.CommandHandler.csproj", "{C56865CC-2FDD-49AC-96AF-C5265BC0159C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Purchasing", "Purchasing", "{AA052A8F-16D8-4133-902D-E84D5EF51ED2}"
 EndProject
@@ -18,19 +18,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProductWarehouse", "Product
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Production", "Production", "{574CC435-513D-4BCA-9FB1-4FC874A8B41F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devCrowd.ServerlessCQRS.Contexts.Purchasing.CommandHandler", "contexts\purchasing\devCrowd.ServerlessCQRS.Contexts.Purchasing.CommandHandler\devCrowd.ServerlessCQRS.Contexts.Purchasing.CommandHandler.csproj", "{1DEBFB22-5264-46AC-B778-87211714D281}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devCrowd.ServerlessCQRS.Contexts.Purchasing.CommandHandler", "domain\purchasing\devCrowd.ServerlessCQRS.Contexts.Purchasing.CommandHandler\devCrowd.ServerlessCQRS.Contexts.Purchasing.CommandHandler.csproj", "{1DEBFB22-5264-46AC-B778-87211714D281}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devCrowd.ServerlessCQRS.Contexts.PartsWarehouse.CommandHandler", "contexts\parts-warehouse\devCrowd.ServerlessCQRS.Contexts.PartsWarehouse.CommandHandler\devCrowd.ServerlessCQRS.Contexts.PartsWarehouse.CommandHandler.csproj", "{42908602-E37E-4B35-9E8B-6C0571AEB86A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devCrowd.ServerlessCQRS.Contexts.PartsWarehouse.CommandHandler", "domain\parts-warehouse\devCrowd.ServerlessCQRS.Contexts.PartsWarehouse.CommandHandler\devCrowd.ServerlessCQRS.Contexts.PartsWarehouse.CommandHandler.csproj", "{42908602-E37E-4B35-9E8B-6C0571AEB86A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devCrowd.ServerlessCQRS.Contexts.Production.CommandHandler", "contexts\production\devCrowd.ServerlessCQRS.Contexts.Production.CommandHandler\devCrowd.ServerlessCQRS.Contexts.Production.CommandHandler.csproj", "{87FF8545-554A-4F55-AF74-7966A811B530}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devCrowd.ServerlessCQRS.Contexts.Production.CommandHandler", "domain\production\devCrowd.ServerlessCQRS.Contexts.Production.CommandHandler\devCrowd.ServerlessCQRS.Contexts.Production.CommandHandler.csproj", "{87FF8545-554A-4F55-AF74-7966A811B530}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devCrowd.ServerlessCQRS.Contexts.ProductWarehouse.CommandHandler", "contexts\product-warehouse\devCrowd.ServerlessCQRS.Contexts.ProductWarehouse.CommandHandler\devCrowd.ServerlessCQRS.Contexts.ProductWarehouse.CommandHandler.csproj", "{922B4982-335C-481F-B33B-763656A03792}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devCrowd.ServerlessCQRS.Contexts.ProductWarehouse.CommandHandler", "domain\product-warehouse\devCrowd.ServerlessCQRS.Contexts.ProductWarehouse.CommandHandler\devCrowd.ServerlessCQRS.Contexts.ProductWarehouse.CommandHandler.csproj", "{922B4982-335C-481F-B33B-763656A03792}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devCrowd.ServerlessCQRS.CustomBindings", "infrastructure\devCrowd.ServerlessCQRS.CustomBindings\devCrowd.ServerlessCQRS.CustomBindings.csproj", "{3AE5372F-4E28-4450-9E0D-BC205BC6AAC3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devCrowd.ServerlessCQRS.Notifications", "infrastructure\devCrowd.ServerlessCQRS.Notifications\devCrowd.ServerlessCQRS.Notifications.csproj", "{77372DDE-5FA4-448F-99B6-858E438DEFD9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler", "contexts\sales\devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler\devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler.csproj", "{80F25B47-121A-4C11-BB0F-1500CDF38184}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler", "domain\sales\devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler\devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler.csproj", "{80F25B47-121A-4C11-BB0F-1500CDF38184}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devCrowd.ServerlessCQRS.Infrastructure.Lib", "infrastructure\devCrowd.ServerlessCQRS.Infrastructure.Lib\devCrowd.ServerlessCQRS.Infrastructure.Lib.csproj", "{E2EDD862-5A3F-4A9E-A1D5-FD8F5E91FA0F}"
 EndProject
