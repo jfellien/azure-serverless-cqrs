@@ -24,28 +24,59 @@ namespace devCrowd.ServerlessCQRS.Contexts.Sales.CommandHandler
             DomainEventStream eventStream,
             ILogger log)
         {
-            var orderPlaced = new OrderPlaced
-            {
-                OrderId = Guid.NewGuid().ToString(),
-                OrderNumber = NextOrderNumber(),
-                Paste = order.Paste,
-                Tomatoes = order.Tomatoes,
-                Cheese = order.Cheese,
-                Amount = order.Amount
-            };
+            /// Here is the place for business validation.
+            /// If an Order is correct, we create the event OrderAccepted
 
-            // Put the Event into EventStream.
-            // EntityId is needed because the Stream doesn't know the Id and can't read from Event 
-            await eventStream.Append(orderPlaced, orderPlaced.OrderId);
-
-            return new OkObjectResult(new
+            var orderId = Guid.NewGuid().ToString();
+            var orderNumber = NextOrderNumber();
+            
+            if (IsValid(order))
             {
-                orderNumber = orderPlaced.OrderNumber,
-                orderId = orderPlaced.OrderId,
-                message = "Order placed"
-            });
+                var orderAccepted = new OrderAccepted
+                {
+                    OrderId = orderId,
+                    OrderNumber = orderNumber,
+                    Paste = order.Paste,
+                    Tomatoes = order.Tomatoes,
+                    Cheese = order.Cheese,
+                    Amount = order.Amount,
+                    CustomerId = order.CustomerId
+                };    
+                
+                // Put the Event into EventStream.
+                // EntityId is needed because the Stream doesn't know the Id and can't read from Event 
+                await eventStream.Append(orderAccepted, orderAccepted.OrderId);
+
+                return new OkObjectResult(new
+                {
+                    orderNumber = orderAccepted.OrderNumber,
+                    orderId = orderAccepted.OrderId,
+                    message = "Order accepted"
+                });
+            }
+            else
+            {
+                var orderDeclined = new OrderDeclined
+                {
+                    OrderId = orderId,
+                    OrderNumber = orderNumber,
+                    OrderContent = $"Paste: {order.Paste}, Tomatoes: {order.Tomatoes}, Cheese{order.Cheese}, Amount: {order.Amount}",
+                    CustomerId = order.CustomerId,
+                    Reason = "[put the reason in here]"
+                };
+
+                return new BadRequestObjectResult(new
+                {
+                    errorCode = "ORDER_DECLINED",
+                    message = "Order declined because of [put the reason in here]"
+                });
+            }
         }
 
+        private static bool IsValid(Order order)
+        {
+            return string.IsNullOrWhiteSpace(order.Paste) == false;
+        }
         /// <summary>
         /// Sample Method to generate a new Order Number
         /// </summary>
