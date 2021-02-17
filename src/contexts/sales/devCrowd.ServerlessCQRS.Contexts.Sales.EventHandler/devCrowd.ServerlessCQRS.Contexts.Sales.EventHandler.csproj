@@ -19,6 +19,7 @@
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\..\..\infrastructure\devCrowd.ServerlessCQRS.Infrastructure.Lib\devCrowd.ServerlessCQRS.Infrastructure.Lib.csproj" />
+      <ProjectReference Include="..\..\..\infrastructure\devCrowd.ServerlessCQRS.ProjectionsStorage\devCrowd.ServerlessCQRS.ProjectionsStorage.csproj" />
       <ProjectReference Include="..\..\devCrowd.ServerlessCQRS.Core\devCrowd.ServerlessCQRS.Core.csproj" />
     </ItemGroup>
 </Project>

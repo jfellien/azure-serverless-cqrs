@@ -1,6 +1,7 @@
 using devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler;
 using devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler.Services;
 using devCrowd.ServerlessCQRS.Infrastructure.Lib.EventSourcing;
+using devCrowd.ServerlessCQRS.ProjectionsStorage;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +13,7 @@ namespace devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
+            builder.Services.AddSingleton<IStoreProjections, CosmosDbProjectionsStorage>();
             builder.Services.AddSingleton<IHandleEvents, SalesEventHandler>();
         }
     }
