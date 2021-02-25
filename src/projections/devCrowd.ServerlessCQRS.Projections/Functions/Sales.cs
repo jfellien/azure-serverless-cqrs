@@ -41,7 +41,6 @@ namespace devCrowd.ServerlessCQRS.Projections.Functions
         public async Task<IActionResult> GetOrderItems(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "order-items")]
             HttpRequest req,
-            string id,
             ILogger log)
         {
             return new OkObjectResult(await _projectionsStorage.GetAll<OrderItem>());
