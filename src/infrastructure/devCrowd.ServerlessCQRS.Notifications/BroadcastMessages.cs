@@ -13,7 +13,7 @@ namespace devCrowd.ServerlessCQRS.Notifications
     {
         [FunctionName("SendInfo")]
         public static Task SendInfo(
-            [ServiceBusTrigger("%BROADCAST_INFO_QUEUE%", Connection = "BROADCAST_CONNECTION_STRING")]
+            [ServiceBusTrigger("%BROADCASTER_INFO_QUEUE%", Connection = "BROADCASTER_CONNECTION_STRING")]
             BroadcastMessageToReceiver infoMessage,
             [SignalR(HubName = "%COMMUNICATION_HUB_NAME%")]
             IAsyncCollector<SignalRMessage> signalRMessages,
@@ -43,7 +43,7 @@ namespace devCrowd.ServerlessCQRS.Notifications
         
         [FunctionName("SendWarning")]
         public static Task SendWarning(
-            [ServiceBusTrigger("%BROADCAST_WARNING_QUEUE%", Connection = "BROADCAST_CONNECTION_STRING")]
+            [ServiceBusTrigger("%BROADCASTER_WARNING_QUEUE%", Connection = "BROADCASTER_CONNECTION_STRING")]
             BroadcastMessageToReceiver warningMessage,
             [SignalR(HubName = "%COMMUNICATION_HUB_NAME%")]
             IAsyncCollector<SignalRMessage> signalRMessages,
@@ -73,7 +73,7 @@ namespace devCrowd.ServerlessCQRS.Notifications
         
         [FunctionName("SendError")]
         public static Task SendError(
-            [ServiceBusTrigger("%BROADCAST_ERROR_QUEUE%", Connection = "BROADCAST_CONNECTION_STRING")]
+            [ServiceBusTrigger("%BROADCASTER_ERROR_QUEUE%", Connection = "BROADCASTER_CONNECTION_STRING")]
             ErrorMessageToReceiver errorMessage,
             [SignalR(HubName = "%COMMUNICATION_HUB_NAME%")]
             IAsyncCollector<SignalRMessage> signalRMessages,
