@@ -22,7 +22,8 @@ namespace devCrowd.ServerlessCQRS.Contexts.Sales.CommandHandler
         public static async Task<IActionResult> RunAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "order")]
             Order order,
-            [DomainEventStream("Sales", "Order")] DomainEventStream eventStream,
+            [DomainEventStream("Sales", "Order")]
+            DomainEventStream eventStream,
             [Broadcaster] Broadcaster broadcaster,
             ILogger log)
         {
