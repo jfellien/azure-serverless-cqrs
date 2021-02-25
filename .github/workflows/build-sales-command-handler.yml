@@ -5,11 +5,13 @@ on:
     branches: [ main ]
     paths:
     - src/domain/sales/**
+    - .github/workflows/build-sales-command-handler.yml
       
   pull_request:
     branches: [ main ]
     paths:
     - src/domain/sales/**
+    - .github/workflows/build-sales-command-handler.yml
 
 jobs:
   build:
@@ -23,9 +25,9 @@ jobs:
       with:
         dotnet-version: 3.1.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore .\src\domain\sales\devCrowd.ServerlessCQRS.Contexts.Sales.CommandHandler\
     - name: Build
-      run: dotnet build --no-restore --configuration Release --output ./output
+      run: dotnet build .\src\domain\sales\devCrowd.ServerlessCQRS.Contexts.Sales.CommandHandler\ --no-restore --configuration Release --output ./output
     - name: Deploy Sales CommandHandler
       uses: Azure/functions-action@v1.3.1
       with:
