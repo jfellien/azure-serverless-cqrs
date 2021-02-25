@@ -1,3 +1,4 @@
+using System;
 using Newtonsoft.Json;
 
 namespace devCrowd.ServerlessCQRS.Core.Projections.Sales
@@ -6,8 +7,10 @@ namespace devCrowd.ServerlessCQRS.Core.Projections.Sales
     {
         public const string DOCUMENT_TYPE = "orderItem";
         
+        public OrderItem() : base(Guid.NewGuid().ToString(), DOCUMENT_TYPE) { }
+        
         public OrderItem(string id) : base(id, DOCUMENT_TYPE) { }
-
+        
         [JsonProperty("number")]
         public string OrderNumber { get; set; }
         [JsonProperty("date")]
