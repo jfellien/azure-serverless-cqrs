@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serverless CQRS - Main Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <style>
+        body{
+        background-image: url("./hg.jpg");
+        background-size: cover;
+        }
+        .slide-fade-enter-active, .slide-fade-leave-active {
+        transition: all 1s ease;
+        }
+        .slide-fade-enter, .slide-fade-leave-to {
+        height: 0px;
+        overflow-y: hidden;
+        opacity: 0;
+        }
+        .container{
+        margin-top: 10px;
+        }
+        .headline{
+        background-color: rgba(255, 255, 255, 0.5);
+        padding:7px
+        }
+    
+        .footer{
+        position: fixed;
+        bottom:0px;
+        height: 45px;
+        background-color:rgba(255, 255, 255, 0.5);
+        width: 100%;
+        }
+        .footer_text{
+        margin-top:10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        }
+        .form{
+        padding-top: 15px;
+        padding-bottom: 15px;
+        background-color: rgba(255, 255, 255, 0.75);
+        font-size: 16px;
+        }
+        .horizontal-space-10{
+        height: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="headline shadow">
+            
+                <div class="display-4">
+                <img src="./pizza.png" height="68px" width="68px" role="presentation">
+                Pizza Factory
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="app" class="container">
+        <div class="toast-container position-absolute top-0 end-0 p-3">
+
+            <div id="toastError" data-bs-autohide="false" class="toast d-flex align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+              <div class="toast-body">
+                {{ notifications.error }}
+              </div>
+              <button type="button" class="btn-close btn-close-white ms-auto me-2" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+      
+            <div id="toastWarning" class="toast d-flex align-items-center text-black bg-warning border-0" role="alert" aria-live="assertive" aria-atomic="true">
+              <div class="toast-body">
+                {{ notifications.warning }}
+              </div>
+              <button type="button" class="btn-close btn-close-white ms-auto me-2" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+      
+            <div id="toastInfo" class="toast d-flex align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+              <div class="toast-body">
+                {{ notifications.info }}
+              </div>
+              <button type="button" class="btn-close btn-close-white ms-auto me-2" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+      
+        </div>
+
+        <div class="row form" v-if="ready">
+            <!-- orders table header row-->
+            <div class="row">
+                <div class="col border-bottom">
+                    <strong>Order Number</strong>
+                </div>
+                <div class="col border-bottom">
+                    <strong>Amount</strong>
+                </div>
+                <div class="col border-bottom">
+                    <strong>Toppings</strong>
+                </div>
+                <div class="col border-bottom">
+                    <strong>Customer</strong>
+                </div>
+            </div>
+            <transition-group name="slide-fade" tag="div">
+                <div class="row" v-for="order in orders" v-bind:key="order.id">
+                    <!-- template for a single order row -->
+                    <div class="row">
+                        <div class="col border-right">
+                            {{ order.number }}
+                        </div>
+                        <div class="col border-right">
+                            {{ order.amount }}
+                        </div>
+                        <div class="col border-right">
+                            {{ order.topings }}
+                        </div>
+                        <div class="col">
+                            {{ order.customer }}
+                        </div>
+                    </div>
+                </div>
+            </transition-group>
+        </div>
+
+        <div class="row form" v-if="!ready">
+            <div class="text-center">
+              <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+        </div>        
+    </div>
+
+    <footer>
+        <div class="footer ">
+            <div class="row align-items-center">
+            <span class="footer_text">Icons erstellt von <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/de/" title="Flaticon">www.flaticon.com</a></span>
+            </div>
+            
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@aspnet/signalr@1.1.2/dist/browser/signalr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.18.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    
+    <script>
+
+        const projectionsBaseUrl = 'https://jfe-serverless-cqrs-projections-dev.azurewebsites.net';
+        const notificationsBaseUrl = 'https://jfe-serverless-cqrs-broadcasting-dev.azurewebsites.net';
+    
+        const viewData = {
+          clientId: '',
+          notifications: {
+            info:'',
+            warning:'',
+            error:''
+          },
+          ready: false,
+          
+          orders:[]
+        };
+    
+        const app = new Vue({
+          el: '#app',
+          data: viewData,
+          methods: {}
+        });
+    
+        negotiateNotificationConnection()
+        .then(info => {
+          // make compatible with old and new SignalRConnectionInfo
+          info.accessToken = info.accessToken || info.accessKey;
+          info.url = info.url || info.endpoint;
+    
+          const options = {
+            accessTokenFactory: () => info.accessToken
+          };
+    
+          const connection = new signalR.HubConnectionBuilder()
+            .withUrl(info.url, options)
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+    
+          connection.on(info.targets.targetInfo, newInfo);
+          connection.on(info.targets.targetWarning, newWarning);
+          connection.on(info.targets.targetError, newError);
+    
+          connection.onclose(() => console.log('disconnected'));
+    
+          console.log('connecting...');
+    
+          connection.start()
+            .then(() => {
+              console.log('connected!');
+              viewData.ready = true;
+    
+              getOrders().then(orders => {
+                
+              });
+    
+              viewData.ready = true;
+    
+            })
+            .catch(showError);
+    
+        })
+        .catch(showError);
+    
+        function getOrders(){
+          return axios
+            .get(`${projectionsBaseUrl}/api/orders`)
+            .then(resp => resp.data);
+        }
+    
+        function newInfo(message) {
+          showInfo(message)
+        }
+    
+        function newWarning(message) {
+          showWarning(message);
+        }
+    
+        function newError(message) {
+          showError(message);
+        }
+    
+        function showError(error){
+          console.log(error);
+    
+          viewData.notifications.error = error.message;
+    
+          // I don't get it how to show by toast.show(), so I use jquery for that
+          $('#toastError').toast('show');
+        }
+    
+        function showWarning(warning){
+          console.log(warning);
+    
+          viewData.notifications.warning = warning.message;
+    
+          // I don't get it how to show by toast.show(), so I use jquery for that
+          $('#toastWarning').toast('show');
+        }
+    
+        function showInfo(info){
+          console.log(info);
+    
+          viewData.notifications.info = info.message;
+    
+          // I don't get it how to show by toast.show(), so I use jquery for that
+          $('#toastInfo').toast('show');
+        }
+    
+        function getAxiosConfig() {
+          const config = {
+            headers: {}
+          };
+          return config;
+        }
+    
+        function negotiateNotificationConnection() {
+          viewData.clientId = '>put or create a clientID here<' // An example -> createUUID();
+    
+          return axios
+            .post(`${notificationsBaseUrl}/api/negotiate/${viewData.clientId}`, null, getAxiosConfig())
+            .then(resp => resp.data);
+        }
+    
+        function createUUID() {
+          return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+              var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+              return v.toString(16);
+          });
+        }
+      </script>      
+</body>
+</html>

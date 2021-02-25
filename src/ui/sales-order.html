@@ -1,11 +1,14 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Serverless Chat</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Serverless CQRS - Order Pizza</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
   <style>
     body{
-      background-image: url("http://pizza-flammkuchen-catering.de/fileadmin/layout/images/hg.jpg");
+      background-image: url("./hg.jpg");
       background-size: cover;
     }
     .slide-fade-enter-active, .slide-fade-leave-active {
@@ -106,6 +109,7 @@
           <div class="col-md-3 offset-md-1">
             <label for="selectPaste" class="form-label">Teig</label>
             <select id="selectPaste" v-model="selectedPaste" class="form-select shadow">
+              <option value="" selected disabled>Bitte auswählen</option>
               <option v-for="paste in pastes" v-bind:value="paste">
                 {{ paste }}
               </option>
@@ -119,8 +123,9 @@
         <div class="row">
 
           <div class="col-md-3 offset-md-1">
-            <label for="selectPaste" class="form-label">Tomaten</label>
+            <label for="selectTomatoes" class="form-label">Tomaten</label>
             <select id="selectedTomatoe" v-model="selectedTomatoe" class="form-select shadow">
+              <option value="" selected disabled>Bitte auswählen</option>
               <option v-for="tomatoe in tomatoes" v-bind:value="tomatoe">
                 {{ tomatoe }}
               </option>
@@ -134,8 +139,9 @@
         <div class="row">
 
           <div class="col-md-3 offset-md-1">
-            <label for="selectPaste" class="form-label">Käse</label>
+            <label for="selectCheese" class="form-label">Käse</label>
             <select id="selectedCheese" v-model="selectedCheese" class="form-select shadow">
+              <option value="" selected disabled>Bitte auswählen</option>
               <option v-for="cheese in cheeses" v-bind:value="cheese">
                 {{ cheese }}
               </option>
@@ -149,8 +155,8 @@
         <div class="row">
 
           <div class="col-md-3 offset-md-1">
-            <label for="selectPaste" class="form-label">Anzahl</label>
-            <input id="amount" class="form-control shadow" type="text" placeholder="Gib die gewünschte Menge an" aria-label="default input example">
+            <label for="amount" class="form-label">Anzahl</label>
+            <input id="amount" v-model="amount" class="form-control shadow" type="text" placeholder="Gib die gewünschte Menge an" aria-label="default input example">
           </div>
         </div>
 
@@ -195,8 +201,9 @@
   
   <script>
 
-    const apiBaseUrl = 'http://localhost:1337';
-    const notificationsBaseUrl = 'http://localhost:7071'
+    const apiBaseUrl = 'https://jfe-serverless-cqrs-sales-commandhandler-dev.azurewebsites.net';
+    const projectionsBaseUrl = 'https://jfe-serverless-cqrs-projections-dev.azurewebsites.net';
+    const notificationsBaseUrl = 'https://jfe-serverless-cqrs-broadcasting-dev.azurewebsites.net';
 
     const viewData = {
       clientId: '',
@@ -213,7 +220,8 @@
       
       selectedPaste:'',
       selectedTomatoe:'',
-      selectedCheese:''
+      selectedCheese:'',
+      amount:0
     };
 
     const app = new Vue({
@@ -221,8 +229,7 @@
       data: viewData,
       methods: {
         sendOrder: function () {
-          sendOrder(this.clientId, this.newMessage);
-          this.newMessage = '';
+          sendOrder(this.clientId);
         }
       }
     });
@@ -255,19 +262,10 @@
           console.log('connected!');
           viewData.ready = true;
 
-          getPastes().then(pastes => {
-            viewData.pastes = pastes;
-            viewData.selectedPaste = pastes[0];
-          });
-
-          getTomatoes().then(tomatoes => {
-            viewData.tomatoes = tomatoes;
-            viewData.selectedTomatoe = tomatoes[0];
-          });
-
-          getCheeses().then(cheeses => {
-            viewData.cheeses = cheeses;
-            viewData.selectedCheese = cheeses[0];
+          getPizzaParts().then(parts => {
+            viewData.pastes = parts.pastes;
+            viewData.tomatoes = parts.tomatoes;
+            viewData.cheeses = parts.cheeses;
           });
 
           viewData.ready = true;
@@ -278,41 +276,35 @@
     })
     .catch(showError);
 
-    function getPastes(){
+    function getPizzaParts(){
       return axios
-        .get(`${apiBaseUrl}/api/pastes`)
-        .then(resp => resp.data);
-    }
-
-    function getTomatoes(){
-      return axios
-        .get(`${apiBaseUrl}/api/tomatoes`)
-        .then(resp => resp.data);
-    }
-
-    function getCheeses(){
-      return axios
-        .get(`${apiBaseUrl}/api/cheeses`)
+        .get(`${projectionsBaseUrl}/api/parts`)
         .then(resp => resp.data);
     }
 
     function sendOrder(sender, messageText) {
-      return axios.post(`${apiBaseUrl}/api/messages`, {
-        sender: sender,
-        text: messageText
-      }).then(resp => resp.data);
+      return axios.post(`${apiBaseUrl}/api/order`, {
+        requestTraceId: viewData.clientId,
+        paste: viewData.selectedPaste,
+        tomatoes: viewData.selectedTomatoe,
+        cheese: viewData.selectedCheese,
+        amount: viewData.amount,
+        customerId: 'demo customer'
+      })
+      .then(resp => resp.data)
+      .catch(showError);
     }
 
     function newInfo(message) {
-      viewData.notifications.info = message;
+      showInfo(message)
     }
 
     function newWarning(message) {
-      viewData.notifications.warning = message;
+      showWarning(message);
     }
 
     function newError(message) {
-      viewData.notifications.error = message;
+      showError(message);
     }
 
     function showError(error){
@@ -325,18 +317,18 @@
     }
 
     function showWarning(warning){
-      console.log(error);
+      console.log(warning);
 
-      viewData.notifications.warning = warning;
+      viewData.notifications.warning = warning.message;
 
       // I don't get it how to show by toast.show(), so I use jquery for that
       $('#toastWarning').toast('show');
     }
 
     function showInfo(info){
-      console.log(error);
+      console.log(info);
 
-      viewData.notifications.info = info;
+      viewData.notifications.info = info.message;
 
       // I don't get it how to show by toast.show(), so I use jquery for that
       $('#toastInfo').toast('show');
@@ -350,7 +342,7 @@
     }
 
     function negotiateNotificationConnection() {
-      viewData.clientId = createUUID();
+      viewData.clientId = '>put or create a clientID here<' // An example -> createUUID();
 
       return axios
         .post(`${notificationsBaseUrl}/api/negotiate/${viewData.clientId}`, null, getAxiosConfig())
