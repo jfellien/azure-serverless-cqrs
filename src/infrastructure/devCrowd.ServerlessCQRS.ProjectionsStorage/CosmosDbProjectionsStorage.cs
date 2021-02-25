@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.Extensions.Options;
 
 namespace devCrowd.ServerlessCQRS.ProjectionsStorage
 {
@@ -9,15 +13,17 @@ namespace devCrowd.ServerlessCQRS.ProjectionsStorage
     {
         private Container _projectionsContainer;
 
-        public CosmosDbProjectionsStorage(string connectionString, string dbName, string collectionName)
+        public CosmosDbProjectionsStorage(IOptions<ProjectionsStorageConfiguration> config)
         {
-            _projectionsContainer = new CosmosClient(connectionString).GetContainer(dbName, collectionName);
+            _projectionsContainer = new CosmosClient(config.Value.ConnectionString)
+                .GetContainer(config.Value.DatabaseName, config.Value.CollectionName);
         }
 
-        public async Task<T> Get<T>(string id, string partitionKey)
+        public async Task<T> Get<T>(string id)  where T : IProjection, new()
         {
+            var defaultTypeInstance = new T();
             var response = await _projectionsContainer
-                .ReadItemAsync<T>(id, new PartitionKey(partitionKey));
+                .ReadItemAsync<T>(id, new PartitionKey(defaultTypeInstance.PartitionKey));
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -25,6 +31,28 @@ namespace devCrowd.ServerlessCQRS.ProjectionsStorage
             }
 
             return response.Resource;
+        }
+
+        public async Task<IEnumerable<T>> GetAll<T>() where T : IProjection, new()
+        {
+            var allItems = new List<T>();
+            var defaultTypeInstance = new T();
+
+            using (var iterator = _projectionsContainer
+                .GetItemLinqQueryable<T>()
+                .Where(x => x.DocumentType == defaultTypeInstance.DocumentType 
+                            && x.PartitionKey == defaultTypeInstance.PartitionKey)
+                .ToFeedIterator())
+            {
+                while (iterator.HasMoreResults)
+                {
+                    var itemsSequence = await iterator.ReadNextAsync();
+                    
+                    allItems.AddRange(itemsSequence);
+                }
+            }
+
+            return allItems;
         }
 
         public async Task Add<T>(T projection) where T : IProjection
@@ -59,5 +87,12 @@ namespace devCrowd.ServerlessCQRS.ProjectionsStorage
                 throw new ApplicationException("Unable to remove this projection");
             }
         }
+    }
+
+    public class ProjectionsStorageConfiguration
+    {
+        public string ConnectionString { get; set; }
+        public string DatabaseName { get; set; }
+        public string CollectionName { get; set; }
     }
 }

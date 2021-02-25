@@ -6,6 +6,7 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.16.0" />
+      <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.0" />
     </ItemGroup>
 
 </Project>
