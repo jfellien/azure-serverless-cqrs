@@ -1,6 +1,6 @@
-namespace devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler.Projections
+namespace devCrowd.ServerlessCQRS.Core.Projections.Sales
 {
-    internal class SimplifiedOrder
+    public class SimplifiedOrder
     {
         public string OrderId { get; set; }
         public string OrderNumber { get; set; }
