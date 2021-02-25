@@ -1,0 +1,35 @@
+name: .NET
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+    - src/domain/sales/**
+      
+  pull_request:
+    branches: [ main ]
+    paths:
+    - src/domain/sales/**
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore --configuration Release --output ./output
+    - name: Deploy Sales CommandHandler
+      uses: Azure/functions-action@v1.3.1
+      with:
+        # Name of the Azure Function App
+        app-name: jfe-serverless-cqrs-sales-commandhandler-dev
+        # Path to package or folder. *.zip or a folder to deploy
+        package: ./output
