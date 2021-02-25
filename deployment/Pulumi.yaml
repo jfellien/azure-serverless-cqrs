@@ -1,0 +1,3 @@
+name: serverless-cqrs
+runtime: nodejs
+description: The Serverless CQRS solution as Pulimi programm 
