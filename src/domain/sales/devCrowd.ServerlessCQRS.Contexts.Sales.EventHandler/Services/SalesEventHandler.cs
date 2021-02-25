@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler.Projections;
 using devCrowd.ServerlessCQRS.Core.Events.Sales;
+using devCrowd.ServerlessCQRS.Core.Projections.Sales;
 using devCrowd.ServerlessCQRS.Infrastructure.Lib.EventSourcing;
 using devCrowd.ServerlessCQRS.Infrastructure.Lib.Extensions;
 using devCrowd.ServerlessCQRS.ProjectionsStorage;
@@ -28,8 +28,36 @@ namespace devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler.Services
         public async Task Handle(OrderAccepted domainEvent)
         {
             var orderDate = DateTime.Now.ToString("yy-MM-dd");
+
+            await StoreCustomerOrder(orderDate, domainEvent);
+
+            await StoreAcceptedOrder(orderDate, domainEvent);
+
+            await StoreOrderItem(orderDate, domainEvent);
+        }
+        
+        public async Task Handle(OrderDeclined domainEvent)
+        {
+            var orderDate = DateTime.Now.ToString("yy-MM-dd");
             
-            var customerOrders = await _projectionsStore.Get<CustomerOrders>(domainEvent.CustomerId, SalesProjection.PROJECTION_KEY);
+            var customerOrders = await _projectionsStore.Get<CustomerOrders>(domainEvent.CustomerId);
+
+            if (customerOrders != null)
+            {
+                customerOrders = new CustomerOrders(domainEvent.CustomerId);
+            }
+            
+            customerOrders.DeclinedOrders.Add(new SimplifiedOrder
+            {
+                OrderDate = orderDate,
+                OrderId = domainEvent.OrderId,
+                OrderNumber = domainEvent.OrderNumber
+            });
+        }
+
+        private async Task StoreCustomerOrder(string orderDate, OrderAccepted domainEvent)
+        {
+            var customerOrders = await _projectionsStore.Get<CustomerOrders>(domainEvent.CustomerId);
 
             if (customerOrders != null)
             {
@@ -44,7 +72,10 @@ namespace devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler.Services
             });
 
             await _projectionsStore.Replace(customerOrders);
-            
+        }
+
+        private async Task StoreAcceptedOrder(string orderDate, OrderAccepted domainEvent)
+        {
             await _projectionsStore.Add(new AcceptedOrder(domainEvent.OrderId)
             {
                 OrderDate = orderDate,
@@ -56,22 +87,19 @@ namespace devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler.Services
                 CustomerId = domainEvent.CustomerId
             });
         }
-        public async Task Handle(OrderDeclined domainEvent)
-        {
-            var orderDate = DateTime.Now.ToString("yy-MM-dd");
-            
-            var customerOrders = await _projectionsStore.Get<CustomerOrders>(domainEvent.CustomerId, SalesProjection.PROJECTION_KEY);
 
-            if (customerOrders != null)
+        private async Task StoreOrderItem(string orderDate, OrderAccepted domainEvent)
+        {
+            var customer = await _projectionsStore.Get<Customer>(domainEvent.CustomerId);
+
+            await _projectionsStore.Add(new OrderItem(domainEvent.OrderId)
             {
-                customerOrders = new CustomerOrders(domainEvent.CustomerId);
-            }
-            
-            customerOrders.DeclinedOrders.Add(new SimplifiedOrder
-            {
+                OrderNumber = domainEvent.OrderNumber,
                 OrderDate = orderDate,
-                OrderId = domainEvent.OrderId,
-                OrderNumber = domainEvent.OrderNumber
+                Amount = domainEvent.Amount,
+                Toppings = $"Paste: {domainEvent.Paste}, Tomatoes: {domainEvent.Tomatoes}, Cheese: {domainEvent.Cheese}",
+                CustomerName = $"{customer.LastName} {customer.FirstName}",
+                CustomerAddress = $"{customer.Address}, {customer.ZipCode} {customer.City}"
             });
         }
     }
