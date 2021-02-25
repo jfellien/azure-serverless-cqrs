@@ -16,7 +16,7 @@ namespace devCrowd.ServerlessCQRS.Notifications
     {
         [FunctionName("Negotiate")]
         public static async Task<IActionResult> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "negotiate/{clientId}")]
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "negotiate/{clientId}")]
             HttpRequest req,
             string clientId,
             [SignalRConnectionInfo(HubName = "%COMMUNICATION_HUB_NAME%", UserId = "{clientId}")]
