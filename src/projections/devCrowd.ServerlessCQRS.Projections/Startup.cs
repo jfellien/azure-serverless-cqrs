@@ -1,5 +1,4 @@
-using devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler;
-using devCrowd.ServerlessCQRS.Infrastructure.Lib.EventSourcing;
+using devCrowd.ServerlessCQRS.Projections;
 using devCrowd.ServerlessCQRS.ProjectionsStorage;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
@@ -7,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
-namespace devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler
+namespace devCrowd.ServerlessCQRS.Projections
 {
     public class Startup : FunctionsStartup
     {
