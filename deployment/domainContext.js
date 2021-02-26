@@ -66,13 +66,15 @@ exports.build = (contextName, resources) => {
         storageAccountAccessKey: resources.storage.primaryAccessKey,
         version: "~3",
         appSettings:{
-            "PROJECTIONS_CONNECTION_STRING": resources.db.connectionStrings[0],
-            "PROJECTIONS_DB_NAME": resources.projections.name,
-            "PROJECTIONS_COLLECTION_NAME": resources.projectionsContainer.name,
+            "APPINSIGHTS_INSTRUMENTATIONKEY": resources.ai.instrumentationKey,
 
             "EVENT_HANDLER_CONNECTION_STRING": resources.sb.defaultPrimaryConnectionString,
             "EVENT_HANDLER_TOPIC_NAME": contextEventsTopic.name,
             "EVENT_HANDLER_SUBSCRIPTION_NAME": contextEventHandlerSubscription.name,
+
+            "ProjectionsStorage:ConnectionString": resources.db.connectionStrings[0],
+            "ProjectionsStorage:DatabaseName": resources.projections.name,
+            "ProjectionsStorage:CollectionName": resources.projectionsContainer.name
         }
     })
 }
