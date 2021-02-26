@@ -23,5 +23,7 @@ namespace devCrowd.ServerlessCQRS.Core.Projections.Sales
         public string CustomerName { get; set; }
         [JsonProperty("customerAddress")]
         public string CustomerAddress { get; set; }
+        [JsonProperty("orderId")]
+        public string OrderId { get; set; }
     }
 }
