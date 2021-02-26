@@ -117,7 +117,7 @@
                             {{ order.amount }}
                         </div>
                         <div class="col border-right">
-                            {{ order.topings }}
+                            {{ order.toppings }}
                         </div>
                         <div class="col">
                             {{ order.customer }}
@@ -222,6 +222,14 @@
     
         function newInfo(message) {
           showInfo(message)
+
+          if(message.message.includes("Order accepted")){
+
+            getOrders().then(orders => {
+                viewData.orders = orders;
+            });
+            
+          }
         }
     
         function newWarning(message) {
