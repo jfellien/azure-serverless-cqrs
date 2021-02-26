@@ -105,7 +105,7 @@ namespace devCrowd.ServerlessCQRS.CustomBindings.EventStore
 
                 AddToLocalHistory(domainEvent, sequenceNumber);
 
-                PublishChanges(domainEvent);
+                await PublishChanges(domainEvent);
             }
         }
 
@@ -123,7 +123,7 @@ namespace devCrowd.ServerlessCQRS.CustomBindings.EventStore
         }
         private async Task PublishChanges(IDomainEvent domainEvent)
         {
-            _publisher.Publish(domainEvent);
+            await _publisher.Publish(domainEvent);
         }
     }
 }
