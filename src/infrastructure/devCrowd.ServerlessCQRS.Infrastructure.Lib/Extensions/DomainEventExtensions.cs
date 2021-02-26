@@ -7,6 +7,8 @@ using devCrowd.ServerlessCQRS.Infrastructure.Lib.EventSourcing;
 using Microsoft.Azure.ServiceBus;
 using Newtonsoft.Json;
 
+#nullable enable
+
 namespace devCrowd.ServerlessCQRS.Infrastructure.Lib.Extensions
 {
     public static class DomainEventExtensions
@@ -38,6 +40,7 @@ namespace devCrowd.ServerlessCQRS.Infrastructure.Lib.Extensions
             var handlerMethodsForEventType =
                 from method in handlerType.GetTypeInfo().DeclaredMethods
                 from parameter in method.GetParameters()
+                where method.IsPublic
                 where parameter.ParameterType == eventType
                 select method;
 
