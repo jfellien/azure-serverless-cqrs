@@ -39,7 +39,7 @@ namespace devCrowd.ServerlessCQRS.Infrastructure.Lib.Extensions
             {
                 return JsonConvert.DeserializeObject(messageAsString, eventType) as IDomainEvent;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw;
             }
