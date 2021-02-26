@@ -14,7 +14,7 @@ namespace devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler.Services
         private readonly IStoreProjections _projectionsStore;
         private readonly ILogger _log;
 
-        public SalesEventHandler(IStoreProjections projectionsStore, ILogger log)
+        public SalesEventHandler(IStoreProjections projectionsStore, ILogger<SalesEventHandler> log)
         {
             _projectionsStore = projectionsStore;
             _log = log;
