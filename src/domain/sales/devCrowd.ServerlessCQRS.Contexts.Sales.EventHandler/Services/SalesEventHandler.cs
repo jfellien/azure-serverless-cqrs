@@ -1,4 +1,7 @@
 using System;
+using System.Linq;
+using System.Reflection.PortableExecutable;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using devCrowd.ServerlessCQRS.Core.Events.Sales;
 using devCrowd.ServerlessCQRS.Core.Projections.Sales;
@@ -57,13 +60,16 @@ namespace devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler.Services
 
         private async Task StoreCustomerOrder(string orderDate, OrderAccepted domainEvent)
         {
-            var customerOrders = await _projectionsStore.Get<CustomerOrders>(domainEvent.CustomerId);
+            var customerOrders = await _projectionsStore.GetSingle<CustomerOrders>(x => x.CustomerId == domainEvent.CustomerId);
 
-            if (customerOrders != null)
+            if (customerOrders == null)
             {
-                customerOrders = new CustomerOrders(domainEvent.CustomerId);
+                customerOrders = new CustomerOrders
+                {
+                    CustomerId = domainEvent.CustomerId
+                };
             }
-            
+
             customerOrders.AcceptedOrders.Add(new SimplifiedOrder
             {
                 OrderId = domainEvent.OrderId,
@@ -92,8 +98,9 @@ namespace devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler.Services
         {
             var customer = await _projectionsStore.Get<Customer>(domainEvent.CustomerId);
 
-            await _projectionsStore.Add(new OrderItem(domainEvent.OrderId)
+            await _projectionsStore.Add(new OrderItem
             {
+                OrderId = domainEvent.OrderId,
                 OrderNumber = domainEvent.OrderNumber,
                 OrderDate = orderDate,
                 Amount = domainEvent.Amount,
