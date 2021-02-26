@@ -15,7 +15,7 @@ namespace devCrowd.ServerlessCQRS.Notifications
     public static class Negotiate
     {
         [FunctionName("Negotiate")]
-        public static async Task<IActionResult> RunAsync(
+        public static IActionResult Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "negotiate/{clientId}")]
             HttpRequest req,
             string clientId,
@@ -27,7 +27,7 @@ namespace devCrowd.ServerlessCQRS.Notifications
             {
                 log.LogInformation($"Negotiate Communication with Client {clientId}");
                 
-                return new OkObjectResult(new
+                var result = new OkObjectResult(new
                 {
                     url = communicationConnectionInfo.Url,
                     accessToken = communicationConnectionInfo.AccessToken,
@@ -38,6 +38,8 @@ namespace devCrowd.ServerlessCQRS.Notifications
                         targetError = Environment.GetEnvironmentVariable("TARGET_ERROR")
                     }
                 });
+
+                return result;
             }
 
             return new BadRequestObjectResult("Missing clientId");
