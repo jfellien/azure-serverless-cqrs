@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Text;
-using devCrowd.ServerlessCQRS.Infrastructure.Lib.EventSourcing;
+using devCrowd.CustomBindings.EventSourcing.EventStreamStorages;
 using Microsoft.Azure.ServiceBus;
 using Newtonsoft.Json;
 
-namespace devCrowd.ServerlessCQRS.Infrastructure.Lib.Extensions
+namespace devCrowd.ServerlessCQRS.Core.EventHandling
 {
     public static class ServiceBusMessageExtensions
     {

@@ -1,6 +1,6 @@
 using devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler;
 using devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler.Services;
-using devCrowd.ServerlessCQRS.Infrastructure.Lib.EventSourcing;
+using devCrowd.ServerlessCQRS.Core.EventHandling;
 using devCrowd.ServerlessCQRS.ProjectionsStorage;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;

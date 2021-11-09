@@ -1,12 +1,9 @@
 using System;
-using System.Linq;
-using System.Reflection.PortableExecutable;
-using System.Runtime.Serialization;
 using System.Threading.Tasks;
+using devCrowd.CustomBindings.EventSourcing.EventStreamStorages;
+using devCrowd.ServerlessCQRS.Core.EventHandling;
 using devCrowd.ServerlessCQRS.Core.Events.Sales;
 using devCrowd.ServerlessCQRS.Core.Projections.Sales;
-using devCrowd.ServerlessCQRS.Infrastructure.Lib.EventSourcing;
-using devCrowd.ServerlessCQRS.Infrastructure.Lib.Extensions;
 using devCrowd.ServerlessCQRS.ProjectionsStorage;
 using Microsoft.Extensions.Logging;
 

@@ -1,12 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler.Services;
-using devCrowd.ServerlessCQRS.Infrastructure.Lib;
-using devCrowd.ServerlessCQRS.Infrastructure.Lib.EventSourcing;
-using devCrowd.ServerlessCQRS.Infrastructure.Lib.Extensions;
+using devCrowd.ServerlessCQRS.Core.EventHandling;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 
 namespace devCrowd.ServerlessCQRS.Contexts.Sales.EventHandler

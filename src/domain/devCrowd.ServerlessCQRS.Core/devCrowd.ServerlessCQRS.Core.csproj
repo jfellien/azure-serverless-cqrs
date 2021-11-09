@@ -9,4 +9,8 @@
       <ProjectReference Include="..\..\infrastructure\devCrowd.ServerlessCQRS.ProjectionsStorage\devCrowd.ServerlessCQRS.ProjectionsStorage.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="devCrowd.CustomBindings.EventSourcing" Version="1.0.1-rc1" />
+    </ItemGroup>
+
 </Project>

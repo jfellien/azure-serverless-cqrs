@@ -1,18 +1,14 @@
 using System;
-using System.IO;
 using System.Threading.Tasks;
+using devCrowd.CustomBindings.EventSourcing;
 using devCrowd.ServerlessCQRS.Contexts.Sales.CommandHandler.Models;
 using devCrowd.ServerlessCQRS.Core.Events.Sales;
-using devCrowd.ServerlessCQRS.CustomBindings.EventStore;
 using devCrowd.ServerlessCQRS.CustomBindings.Notifications;
 using devCrowd.ServerlessCQRS.Infrastructure.Lib.Notifications;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace devCrowd.ServerlessCQRS.Contexts.Sales.CommandHandler
 {
@@ -35,7 +31,7 @@ namespace devCrowd.ServerlessCQRS.Contexts.Sales.CommandHandler
 
             if (IsValid(order))
             {
-                var orderAccepted = new OrderAccepted
+                var orderAccepted = new OrderAccepted(Guid.Empty.ToString())
                 {
                     OrderId = orderId,
                     OrderNumber = orderNumber,
@@ -66,7 +62,7 @@ namespace devCrowd.ServerlessCQRS.Contexts.Sales.CommandHandler
             }
             else
             {
-                var orderDeclined = new OrderDeclined
+                var orderDeclined = new OrderDeclined(Guid.Empty.ToString())
                 {
                     OrderId = orderId,
                     OrderNumber = orderNumber,

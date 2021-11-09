@@ -1,37 +1,13 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
-using devCrowd.ServerlessCQRS.Infrastructure.Lib.EventSourcing;
-using Microsoft.Azure.ServiceBus;
-using Newtonsoft.Json;
+using devCrowd.CustomBindings.EventSourcing.EventStreamStorages;
 
-#nullable enable
-
-namespace devCrowd.ServerlessCQRS.Infrastructure.Lib.Extensions
+namespace devCrowd.ServerlessCQRS.Core.EventHandling
 {
     public static class DomainEventExtensions
     {
-        /// <summary>
-        /// Converts a DomainEvent to a ServiceBusMessage and sets
-        /// a UserProperty with EventType Name
-        /// </summary>
-        /// <param name="domainEvent"></param>
-        /// <returns></returns>
-        public static Message ToServiceBusMessage(this IDomainEvent domainEvent)
-        {
-            var eventAsString = JsonConvert.SerializeObject(domainEvent);
-            var eventAsBytes = Encoding.UTF8.GetBytes(eventAsString);
-
-            var serviceBusMessage = new Message(eventAsBytes);
-            var eventTypeName = domainEvent.GetType().AssemblyQualifiedName;
-
-            serviceBusMessage.UserProperties.Add(ServiceBusMessageExtensions.EVENT_TYPE, eventTypeName);
-
-            return serviceBusMessage;
-        }
-
         public static Task HandleMeWith(this IDomainEvent domainEvent, IHandleEvents eventHandler)
         {
             var handlerType = eventHandler.GetType();
