@@ -5,12 +5,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\infrastructure\devCrowd.ServerlessCQRS.Infrastructure.Lib\devCrowd.ServerlessCQRS.Infrastructure.Lib.csproj" />
-      <ProjectReference Include="..\..\infrastructure\devCrowd.ServerlessCQRS.ProjectionsStorage\devCrowd.ServerlessCQRS.ProjectionsStorage.csproj" />
+      <PackageReference Include="devCrowd.CustomBindings.EventSourcing" Version="1.0.1-rc2" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="devCrowd.CustomBindings.EventSourcing" Version="1.0.1-rc1" />
+      <ProjectReference Include="..\..\infrastructure\devCrowd.ServerlessCQRS.Infrastructure.Lib\devCrowd.ServerlessCQRS.Infrastructure.Lib.csproj" />
+      <ProjectReference Include="..\..\infrastructure\devCrowd.ServerlessCQRS.ProjectionsStorage\devCrowd.ServerlessCQRS.ProjectionsStorage.csproj" />
     </ItemGroup>
 
 </Project>

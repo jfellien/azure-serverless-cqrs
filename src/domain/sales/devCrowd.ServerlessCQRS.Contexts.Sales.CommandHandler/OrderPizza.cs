@@ -3,8 +3,6 @@ using System.Threading.Tasks;
 using devCrowd.CustomBindings.EventSourcing;
 using devCrowd.ServerlessCQRS.Contexts.Sales.CommandHandler.Models;
 using devCrowd.ServerlessCQRS.Core.Events.Sales;
-using devCrowd.ServerlessCQRS.CustomBindings.Notifications;
-using devCrowd.ServerlessCQRS.Infrastructure.Lib.Notifications;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -20,7 +18,6 @@ namespace devCrowd.ServerlessCQRS.Contexts.Sales.CommandHandler
             Order order,
             [DomainEventStream("Sales", "Order")]
             DomainEventStream eventStream,
-            [Broadcaster] Broadcaster broadcaster,
             ILogger log)
         {
             /// Here is the place for business validation.
@@ -45,14 +42,7 @@ namespace devCrowd.ServerlessCQRS.Contexts.Sales.CommandHandler
                 // Put the Event into EventStream.
                 // EntityId is needed because the Stream doesn't know the Id and can't read from Event 
                 await eventStream.Append(orderAccepted, orderAccepted.OrderId);
-
-                await broadcaster.SendInfo(new BroadcastMessageToReceiver()
-                {
-                    From = "Pizza Factory - Order System",
-                    To = order.RequestTraceId,
-                    MessageText = $"Order accepted (Order Number: {orderNumber})"
-                });
-
+                
                 return new OkObjectResult(new
                 {
                     orderNumber = orderAccepted.OrderNumber,
@@ -74,13 +64,7 @@ namespace devCrowd.ServerlessCQRS.Contexts.Sales.CommandHandler
 
                 try
                 {
-                    await broadcaster.SendWarning(new BroadcastMessageToReceiver()
-                    {
-                        From = "Pizza Factory - Order System",
-                        To = order.RequestTraceId,
-                        MessageText =
-                            $"Order declined (Order Number: {orderNumber} ==> Reason : [pu the reason in here])"
-                    });
+                    
                 }
                 catch (Exception ex)
                 {
