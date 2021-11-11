@@ -1,5 +1,0 @@
-config:
-  azure:environment: public
-  azure:location: westeurope
-  serverless-cqrs:resource-names:
-    company: jfe
