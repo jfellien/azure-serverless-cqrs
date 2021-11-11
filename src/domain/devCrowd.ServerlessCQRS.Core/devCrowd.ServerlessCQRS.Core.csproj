@@ -5,10 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="devCrowd.CustomBindings.EventSourcing" Version="1.0.1-rc2" />
-    </ItemGroup>
-
-    <ItemGroup>
+      <ProjectReference Include="..\..\..\..\custom bindings\DomainEventStreams\src\devCrowd.CustomBindings.EventSourcing.csproj" />
       <ProjectReference Include="..\..\infrastructure\devCrowd.ServerlessCQRS.Infrastructure.Lib\devCrowd.ServerlessCQRS.Infrastructure.Lib.csproj" />
       <ProjectReference Include="..\..\infrastructure\devCrowd.ServerlessCQRS.ProjectionsStorage\devCrowd.ServerlessCQRS.ProjectionsStorage.csproj" />
     </ItemGroup>

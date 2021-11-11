@@ -12,7 +12,7 @@ namespace devCrowd.ServerlessCQRS.Contexts.Sales.CommandHandler
 {
     public static class OrderPizza
     {
-        [FunctionName("OrderPizza")]
+        [FunctionName("Order")]
         public static async Task<IActionResult> RunAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "order")]
             Order order,
